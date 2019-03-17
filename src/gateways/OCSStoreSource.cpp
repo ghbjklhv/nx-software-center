@@ -29,8 +29,10 @@ void OCSStoreSource::startParser(const QUrlQuery &query) {
 
 QUrlQuery OCSStoreSource::getQuery() const {
     QUrlQuery query;
-    query.addQueryItem("package_types", "1");
+    query.addQueryItem("packagetype", "1");
     query.addQueryItem("page", QString::number(page));
+    query.addQueryItem("categories", "398");
+    query.addQueryItem("pagesize", "100");
     return query;
 }
 

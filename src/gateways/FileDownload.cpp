@@ -32,8 +32,10 @@ void FileDownload::handleReadyRead() {
 }
 
 void FileDownload::downloadAvailableBytes() {
-    if (file.isOpen())
+    if (file.isOpen()) {
         file.write(reply->readAll());
+        file.flush();
+    }
 }
 
 void FileDownload::handleCompleted() {

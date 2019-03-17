@@ -18,6 +18,7 @@ OCSStoreDataParser::~OCSStoreDataParser() { delete queryInstance; }
 void OCSStoreDataParser::extractApplications() {
     results.clear();
 
+    qDebug() << target.toString() << " " << itemsPerPage;
     int contentItems = countContentItems();
 
     if (!failed) {

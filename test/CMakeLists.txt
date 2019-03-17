@@ -5,6 +5,7 @@ include(cmake/fetch_gtest.cmake)
 ######
 # Configure tests
 ######
+add_subdirectory(src/remote)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Network Test XmlPatterns)
 

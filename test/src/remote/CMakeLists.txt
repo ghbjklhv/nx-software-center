@@ -1,0 +1,4 @@
+add_executable(TestAppImageIndex TestAppImageIndex.cpp)
+target_link_libraries(TestAppImageIndex PRIVATE gtest gtest_main)
+
+add_test(TestAppImageIndex TestAppImageIndex)

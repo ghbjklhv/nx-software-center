@@ -17,9 +17,8 @@ if(NOT LibAppImage_FOUND)
     ExternalProject_Get_Property(LibAppImage_External INSTALL_DIR)
     set(LibAppImage_INSTALL_DIR ${INSTALL_DIR})
 
-    set(libappimage_PATH ${LibAppImage_INSTALL_DIR}${CMAKE_INSTALL_PREFIX}/lib/libappimage.so)
-    set(libappimage_INCLUDE_DIRECTORIES ${LibAppImage_INSTALL_DIR}${CMAKE_INSTALL_PREFIX}/include/)
-
+    set(libappimage_PATH "${LibAppImage_INSTALL_DIR}${CMAKE_INSTALL_PREFIX}/lib/libappimage.so")
+    set(libappimage_INCLUDE_DIRECTORIES "${LibAppImage_INSTALL_DIR}${CMAKE_INSTALL_PREFIX}/include/")
 
     add_library(libappimage SHARED IMPORTED)
 

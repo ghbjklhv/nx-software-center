@@ -9,16 +9,15 @@
 #include "Explorer.h"
 
 Explorer::Explorer(QString url, QObject* parent)
-        :QObject(parent), busy(false), api(url), networkAccessManager(new QNetworkAccessManager(this))
-{
+    : QObject(parent), busy(false), api(url), networkAccessManager(new QNetworkAccessManager(this)) {
 
 }
-bool Explorer::isBusy() const
-{
+
+bool Explorer::isBusy() const {
     return busy;
 }
-void Explorer::search(const QString& query, const QString& category)
-{
+
+void Explorer::search(const QString& query, const QString& category) {
     trySetBusy();
 
     QUrl url = buildSearchQueryUrl(query, category);
@@ -28,43 +27,42 @@ void Explorer::search(const QString& query, const QString& category)
     connect(networkAccessManager, &QNetworkAccessManager::finished, this, &Explorer::handleSearchRequestResults);
 
 }
-QUrl Explorer::buildSearchQueryUrl(const QString& query, const QString& category) const
-{
+
+QUrl Explorer::buildSearchQueryUrl(const QString& query, const QString& category) const {
     QString urlQuery;
     if (!query.isEmpty())
-        urlQuery += "query="+query;
+        urlQuery += "query=" + query;
 
     if (!category.isEmpty()) {
         if (!urlQuery.isEmpty())
             urlQuery += "&";
-        urlQuery += "category="+category;
+        urlQuery += "category=" + category;
     }
 
-    QUrl url = api+"/applications/search";
+    QUrl url = api + "/applications/search";
     url.setQuery(urlQuery);
     return url;
 }
-void Explorer::trySetBusy()
-{
+
+void Explorer::trySetBusy() {
     if (busy)
         throw ExplorerBusy();
 
     setBusy(true);
 }
-void Explorer::setBusy(bool busy)
-{
+
+void Explorer::setBusy(bool busy) {
     Explorer::busy = busy;
     emit isBusyChanged(busy);
 }
-void Explorer::handleSearchRequestResults(QNetworkReply* reply)
-{
+
+void Explorer::handleSearchRequestResults(QNetworkReply* reply) {
     disconnect(networkAccessManager, &QNetworkAccessManager::finished, this, &Explorer::handleSearchRequestResults);
 
-    if (reply->error()!=QNetworkReply::NoError) {
+    if (reply->error() != QNetworkReply::NoError) {
         emit failure(reply->errorString());
         emit searchCompleted(QList<QVariantMap>());
-    }
-    else {
+    } else {
         auto response = reply->readAll();
         auto jsonDoc = QJsonDocument::fromJson(response);
         QList<QVariantMap> apps;
@@ -74,12 +72,10 @@ void Explorer::handleSearchRequestResults(QNetworkReply* reply)
                 if (v.isObject()) {
                     auto obj = v.toObject();
                     apps << obj.toVariantMap();
-                }
-                else
+                } else
                     qWarning() << "Unexpected response " << v;
             }
-        }
-        else
+        } else
             qWarning() << "Unexpected response: " << jsonDoc;
 
         emit searchCompleted(apps);
@@ -88,8 +84,8 @@ void Explorer::handleSearchRequestResults(QNetworkReply* reply)
     reply->deleteLater();
     setBusy(false);
 }
-void Explorer::getApplication(const QString& id)
-{
+
+void Explorer::getApplication(const QString& id) {
     trySetBusy();
 
     QUrl url = buildGetApplicationUrl(id);
@@ -98,28 +94,25 @@ void Explorer::getApplication(const QString& id)
     networkAccessManager->get(request);
     connect(networkAccessManager, &QNetworkAccessManager::finished, this, &Explorer::handleGetApplicationResult);
 }
-QUrl Explorer::buildGetApplicationUrl(const QString& id) const
-{
-    QUrl url = api+"/applications/"+id;
+
+QUrl Explorer::buildGetApplicationUrl(const QString& id) const {
+    QUrl url = api + "/applications/" + id;
     url.setQuery(R"(filter={"include":[{"releases":{"files":{}}}]})");
     return url;
 }
-void Explorer::handleGetApplicationResult(QNetworkReply* reply)
-{
+
+void Explorer::handleGetApplicationResult(QNetworkReply* reply) {
     disconnect(networkAccessManager, &QNetworkAccessManager::finished, this, &Explorer::handleGetApplicationResult);
 
-    if (reply->error()==QNetworkReply::NoError) {
+    if (reply->error() == QNetworkReply::NoError) {
         auto response = reply->readAll();
         auto jsonDoc = QJsonDocument::fromJson(response);
         if (jsonDoc.isObject()) {
             auto obj = jsonDoc.object();
             emit getApplicationCompleted(obj.toVariantMap());
-            qInfo() << obj;
-        }
-        else
+        } else
             qWarning() << "Unexpected response: " << jsonDoc;
-    }
-    else {
+    } else {
         emit failure(reply->errorString());
         emit getApplicationCompleted(QVariantMap());
     }
@@ -129,4 +122,4 @@ void Explorer::handleGetApplicationResult(QNetworkReply* reply)
 }
 
 ExplorerBusy::ExplorerBusy(const std::string& __arg)
-        :runtime_error(__arg) { }
+    : runtime_error(__arg) {}

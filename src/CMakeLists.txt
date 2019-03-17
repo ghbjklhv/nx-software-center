@@ -63,6 +63,9 @@ target_include_directories(core
     PUBLIC ${libappimage_INCLUDE_DIRECTORIES}
     )
 
+target_compile_definitions(core PUBLIC LIBAPPIMAGE_DESKTOP_INTEGRATION_ENABLED)
+
+
 add_dependencies(core libappimage)
 
 ###
@@ -135,3 +138,4 @@ target_link_libraries(nx_software_center
 
 install(TARGETS nx_software_center ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
+add_subdirectory(cli)
