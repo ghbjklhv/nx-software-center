@@ -1,5 +1,5 @@
 #include <gateways/SimpleDownloadManager.h>
-#include "InstallCommand.h"
+#include "GetCommand.h"
 
 extern "C" {
 #include <sys/ioctl.h>

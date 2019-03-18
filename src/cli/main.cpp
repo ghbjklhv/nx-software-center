@@ -3,8 +3,9 @@
 #include <QCommandLineParser>
 
 // local
-#include "ListCommand.h"
-#include "InstallCommand.h"
+#include "commands/SearchCommand.h"
+#include "commands/GetCommand.h"
+#include "commands/ListCommand.h"
 
 int main(int argc, char** argv) {
 
@@ -12,7 +13,7 @@ int main(int argc, char** argv) {
 
     QCommandLineParser parser;
     parser.addPositionalArgument("command", QCoreApplication::translate("cli-main",
-                                                                        "Command to be executed: search | install | update | remove"));
+                                                                        "Command to be executed: search | get | list | update | remove"));
     parser.process(app);
 
     QStringList args = parser.positionalArguments();
@@ -25,23 +26,28 @@ int main(int argc, char** argv) {
         if (args.empty())
             qFatal("Missing search query, try:\n\tapp search franz");
 
-        command = new ListCommand(args.first());
+        command = new SearchCommand(args.first());
     }
 
-    if (args.first() == "install") {
+    if (args.first() == "get") {
         args.pop_front();
         if (args.empty())
-            qFatal("Missing application id, try:\n\tapp install franz");
+            qFatal("Missing application id, try:\n\tapp get franz");
 
         command = new InstallOperation(args.first());
     }
 
+    if (args.first() == "list")
+        command = new ListCommand();
+
     if (command) {
-        QObject::connect(command, &Command::executionCompleted, &app, &QCoreApplication::quit);
+        QObject::connect(command, &Command::executionCompleted, &app, &QCoreApplication::quit, Qt::QueuedConnection);
         QObject::connect(command, &Command::executionFailed, [&app](const QString& message) {
             qWarning() << message;
-            app.exit(0);
+            app.exit(1);
         });
+
+        QMetaObject::invokeMethod(&app, &QCoreApplication::startingUp);
         command->execute();
 
         return app.exec();

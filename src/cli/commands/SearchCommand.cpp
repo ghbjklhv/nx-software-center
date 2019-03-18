@@ -2,17 +2,17 @@
 #include <QDebug>
 
 // local
-#include "ListCommand.h"
+#include "SearchCommand.h"
 
-ListCommand::ListCommand(const QString& query) : explorer("http://apps.nxos.org/api"), query(query) {
-    connect(&explorer, &Explorer::searchCompleted, this, &ListCommand::handleSearchCompleted, Qt::QueuedConnection);
+SearchCommand::SearchCommand(const QString& query) : explorer("http://apps.nxos.org/api"), query(query) {
+    connect(&explorer, &Explorer::searchCompleted, this, &SearchCommand::handleSearchCompleted, Qt::QueuedConnection);
 }
 
-void ListCommand::execute() {
+void SearchCommand::execute() {
     explorer.search(query);
 }
 
-void ListCommand::handleSearchCompleted(QList<QVariantMap> apps) {
+void SearchCommand::handleSearchCompleted(QList<QVariantMap> apps) {
     static QTextStream out(stdout);
 
     for (const auto app: apps) {

@@ -24,7 +24,7 @@ if(NOT LibAppImage_FOUND)
 
     set_target_properties(libappimage PROPERTIES
         IMPORTED_LOCATION ${libappimage_PATH}
-        INCLUDE_DIRECTORIES ${libappimage_INCLUDE_DIRECTORIES}
+        INTERFACE_INCLUDE_DIRECTORIES ${libappimage_INCLUDE_DIRECTORIES}
         INTERFACE_LINK_LIBRARIES "glib-2.0"
         )
 

@@ -4,10 +4,10 @@
 #include <Command.h>
 #include <entities/Explorer.h>
 
-class ListCommand : public Command {
+class SearchCommand : public Command {
 Q_OBJECT
 public:
-    explicit ListCommand(const QString& query);
+    explicit SearchCommand(const QString& query);
 
 public slots:
     void execute() override;
