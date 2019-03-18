@@ -6,6 +6,7 @@
 #include "commands/SearchCommand.h"
 #include "commands/GetCommand.h"
 #include "commands/ListCommand.h"
+#include "commands/RemoveCommand.h"
 
 int main(int argc, char** argv) {
 
@@ -40,11 +41,19 @@ int main(int argc, char** argv) {
     if (args.first() == "list")
         command = new ListCommand();
 
+    if (args.first() == "remove") {
+        args.pop_front();
+        if (args.empty())
+            qFatal("Missing application id, try:\n\tapp remove franz");
+
+        command = new RemoveCommand(args.first());
+    }
+
     if (command) {
         QObject::connect(command, &Command::executionCompleted, &app, &QCoreApplication::quit, Qt::QueuedConnection);
-        QObject::connect(command, &Command::executionFailed, [&app](const QString& message) {
+        QObject::connect(command, &Command::executionFailed, &app, &QCoreApplication::quit, Qt::QueuedConnection);
+        QObject::connect(command, &Command::executionFailed, [](const QString& message) {
             qWarning() << message;
-            app.exit(1);
         });
 
         QMetaObject::invokeMethod(&app, &QCoreApplication::startingUp);

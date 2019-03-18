@@ -1,9 +1,10 @@
 add_executable(app
     main.cpp
     Command.h
-    commands/SearchCommand.cpp
-    commands/ListCommand.cpp
     commands/GetCommand.cpp
+    commands/ListCommand.cpp
+    commands/SearchCommand.cpp
+    commands/RemoveCommand.cpp
     $<TARGET_OBJECTS:core>
     )
 
